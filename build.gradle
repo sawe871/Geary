@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
+}
+
+group = pluginGroup
+version = pluginVersion
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.15-R0.1-SNAPSHOT'
+    compileOnly group: 'org.spigotmc', name: 'spigot', version: '1.15.1-R0.1-SNAPSHOT'
+    implementation group: 'com.badlogicgames.ashley', name: 'ashley', version: '1.7.3'
+    implementation "com.google.auto.value:auto-value-annotations:1.7"
+    annotationProcessor "com.google.auto.value:auto-value:1.7"
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+
+task copyJar(type: Copy) {
+    from shadowJar // here it automatically reads jar file produced from jar task
+    into '/home/derongan/servers/1.15.1/plugins'
+}
+
+build.dependsOn copyJar

@@ -1,0 +1,4 @@
+name: Geary
+version: @version@
+main: com.mineinabyss.geary.Geary
+api-version: 1.13
