@@ -8,13 +8,10 @@ public class Projectile implements Component {
 
   private org.bukkit.entity.Projectile projectile;
   private Supplier<Set<Component>> collisionComponents;
-  private boolean removeOnHit;
-
   public Projectile(org.bukkit.entity.Projectile projectile,
-      Supplier<Set<Component>> onHitComponents, boolean removeOnHit) {
+      Supplier<Set<Component>> onHitComponents) {
     this.projectile = projectile;
     this.collisionComponents = onHitComponents;
-    this.removeOnHit = removeOnHit;
   }
 
   public Supplier<Set<Component>> getCollisionComponents() {
@@ -25,7 +22,8 @@ public class Projectile implements Component {
     return projectile;
   }
 
-  public boolean isRemoveOnHit(){
-    return removeOnHit;
+  public void setCollisionComponents(
+      Supplier<Set<Component>> collisionComponents) {
+    this.collisionComponents = collisionComponents;
   }
 }

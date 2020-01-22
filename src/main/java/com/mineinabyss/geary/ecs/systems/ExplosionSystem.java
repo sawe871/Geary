@@ -3,8 +3,8 @@ package com.mineinabyss.geary.ecs.systems;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableList;
-import com.mineinabyss.geary.ecs.components.Explosion;
 import com.mineinabyss.geary.ecs.components.Position;
+import com.mineinabyss.geary.ecs.components.effect.Explosion;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 

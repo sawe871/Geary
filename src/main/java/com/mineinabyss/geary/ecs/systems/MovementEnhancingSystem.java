@@ -5,8 +5,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.mineinabyss.geary.ecs.components.Equipped;
 import com.mineinabyss.geary.ecs.components.Speed;
+import com.mineinabyss.geary.ecs.components.equipment.Equipped;
 import org.bukkit.entity.Player;
 
 public class MovementEnhancingSystem extends IteratingSystem implements EntityListener {

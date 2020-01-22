@@ -8,7 +8,6 @@ import com.mineinabyss.geary.ecs.components.Actor;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.Projectile;
 import com.mineinabyss.geary.ecs.components.ProjectileHitGround;
-import com.mineinabyss.geary.ecs.components.Remove;
 
 public class ProjectileCollisionSystem extends IteratingSystem {
 
@@ -25,13 +24,9 @@ public class ProjectileCollisionSystem extends IteratingSystem {
     Position position = positionComponentMapper.get(entity);
     Projectile projectile = projectileComponentMapper.get(entity);
     Actor actor = actorComponentMapper.get(entity);
-    entity.removeAll();
+    entity.remove(Projectile.class);
     projectile.getCollisionComponents().get().forEach(entity::add);
     entity.add(actor);
     entity.add(position);
-
-    if (projectile.isRemoveOnHit()) {
-      entity.add(new Remove());
-    }
   }
 }

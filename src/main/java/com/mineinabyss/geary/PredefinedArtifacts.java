@@ -1,15 +1,12 @@
 package com.mineinabyss.geary;
 
 import com.badlogic.ashley.core.Entity;
-import com.google.common.collect.ImmutableSet;
-import com.mineinabyss.geary.ecs.components.Activated;
 import com.mineinabyss.geary.ecs.components.ClimbingRopeCreator;
-import com.mineinabyss.geary.ecs.components.Equippable;
-import com.mineinabyss.geary.ecs.components.Explosion;
-import com.mineinabyss.geary.ecs.components.Rope;
 import com.mineinabyss.geary.ecs.components.Speed;
-import com.mineinabyss.geary.ecs.components.ProjectileLauncher;
-import com.mineinabyss.geary.ecs.components.Yanker;
+import com.mineinabyss.geary.ecs.components.effect.Explosion;
+import com.mineinabyss.geary.ecs.components.equipment.Equippable;
+import com.mineinabyss.geary.ecs.components.grappling.GrapplingHook;
+import com.mineinabyss.geary.ecs.components.rendering.DisplayState;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class PredefinedArtifacts {
@@ -28,10 +25,8 @@ public class PredefinedArtifacts {
 
   public static Entity createGrapplingHook() {
     return new Entity()
-        .add(new ProjectileLauncher(1,
-            () -> ImmutableSet.of(new Yanker(), new Activated()),
-            () -> ImmutableSet.of(new Rope(), new AnchorToActor(),
-                new AnchorToProjectile())))
+        .add(new GrapplingHook())
+        .add(new DisplayState(3))
         .add(new Equippable(EquipmentSlot.HAND));
   }
 }

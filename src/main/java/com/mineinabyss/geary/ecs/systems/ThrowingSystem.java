@@ -3,13 +3,13 @@ package com.mineinabyss.geary.ecs.systems;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableList;
-import com.mineinabyss.geary.ProjectileMapper;
-import com.mineinabyss.geary.ecs.components.Activated;
+import com.mineinabyss.geary.core.ProjectileMapper;
 import com.mineinabyss.geary.ecs.components.Actor;
-import com.mineinabyss.geary.ecs.components.Equipped;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.Projectile;
 import com.mineinabyss.geary.ecs.components.ProjectileLauncher;
+import com.mineinabyss.geary.ecs.components.control.Activated;
+import com.mineinabyss.geary.ecs.components.equipment.Equipped;
 import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -57,7 +57,7 @@ public class ThrowingSystem extends ActingSystem {
 
     Entity projectileEntity = new Entity();
 
-    projectileEntity.add(new Projectile(projectile, projectileLauncher.getCollisionComponents(), true));
+    projectileEntity.add(new Projectile(projectile, projectileLauncher.getCollisionComponents()));
     projectileEntity.add(new Position(projectile.getLocation()));
 
     getActor(entity).ifPresent(player -> projectileEntity.add(new Actor(player)));

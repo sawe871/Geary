@@ -1,4 +1,4 @@
-package com.mineinabyss.geary;
+package com.mineinabyss.geary.core;
 
 import com.badlogic.ashley.core.Entity;
 import java.util.HashMap;

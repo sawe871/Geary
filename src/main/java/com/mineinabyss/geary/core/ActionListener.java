@@ -1,13 +1,14 @@
-package com.mineinabyss.geary;
+package com.mineinabyss.geary.core;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.mineinabyss.geary.PredefinedArtifacts;
 import com.mineinabyss.geary.ecs.EntityToEntityMapper;
 import com.mineinabyss.geary.ecs.EntityToEntityMapper.EntityData;
-import com.mineinabyss.geary.ecs.components.Activated;
-import com.mineinabyss.geary.ecs.components.Equipped;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.ProjectileHitGround;
+import com.mineinabyss.geary.ecs.components.control.Activated;
+import com.mineinabyss.geary.ecs.components.equipment.Equipped;
 import java.util.Optional;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -68,7 +69,6 @@ public class ActionListener implements Listener {
   @EventHandler
   public void onProjectileHitEvent(ProjectileHitEvent projectileHitEvent) {
     Entity entity = projectileMapper.getEntity(projectileHitEvent.getEntity());
-
 
     // TODO we do more than we want here. Events fire after updates, meaning next tick
     // projectile might be null

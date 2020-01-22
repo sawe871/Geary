@@ -44,4 +44,12 @@ task copyJar(type: Copy) {
     into '/home/derongan/servers/1.15.1/plugins'
 }
 
+task createPack(type:Zip) {
+    from './src/main/resources/pack'
+    into '/'
+    include '**/*'
+    archiveName 'geary-pack.zip'
+    destinationDir file('/home/derongan/.local/share/multimc/instances/1.15.1/.minecraft/resourcepacks/')
+}
+
 build.dependsOn copyJar

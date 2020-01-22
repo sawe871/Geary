@@ -1,37 +1,26 @@
 package com.mineinabyss.geary.ecs.components;
 
 import com.badlogic.ashley.core.Component;
-import org.bukkit.Location;
+import com.mineinabyss.geary.core.LocationWrapper;
 
 /**
  * Component that represents a rope.
  */
 public class Rope implements Component {
 
-  private Location start;
-  private Location end;
+  private LocationWrapper start;
+  private LocationWrapper end;
 
-  public Rope() {
-  }
-
-  public Rope(Location start, Location end) {
+  public Rope(LocationWrapper start, LocationWrapper end) {
     this.start = start;
     this.end = end;
   }
 
-  public Location getStart() {
+  public LocationWrapper getStart() {
     return start;
   }
 
-  public void setStart(Location start) {
-    this.start = start;
-  }
-
-  public Location getEnd() {
+  public LocationWrapper getEnd() {
     return end;
-  }
-
-  public void setEnd(Location end) {
-    this.end = end;
   }
 }

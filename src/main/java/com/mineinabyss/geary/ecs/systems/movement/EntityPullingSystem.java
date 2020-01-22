@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.ecs.systems;
+package com.mineinabyss.geary.ecs.systems.movement;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -6,12 +6,12 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.mineinabyss.geary.ecs.components.Actor;
 import com.mineinabyss.geary.ecs.components.Position;
-import com.mineinabyss.geary.ecs.components.Yanker;
+import com.mineinabyss.geary.ecs.components.effect.PullToLocation;
 import org.bukkit.Location;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-public class YankingSystem extends IteratingSystem {
+public class EntityPullingSystem extends IteratingSystem {
 
   private static final double MAX_SPEED = 3;
 
@@ -19,8 +19,8 @@ public class YankingSystem extends IteratingSystem {
   private ComponentMapper<Position> positionComponentMapper = ComponentMapper
       .getFor(Position.class);
 
-  public YankingSystem() {
-    super(Family.all(Position.class, Actor.class, Yanker.class).get());
+  public EntityPullingSystem() {
+    super(Family.all(Position.class, Actor.class, PullToLocation.class).get());
   }
 
   @Override
@@ -57,7 +57,7 @@ public class YankingSystem extends IteratingSystem {
 
       who.setVelocity(velocity);
     } else {
-      entity.remove(Yanker.class);
+      entity.remove(PullToLocation.class);
     }
   }
 }

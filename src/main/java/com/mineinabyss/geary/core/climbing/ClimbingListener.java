@@ -1,4 +1,4 @@
-package com.mineinabyss.geary;
+package com.mineinabyss.geary.core.climbing;
 
 import java.util.Optional;
 import org.bukkit.GameMode;

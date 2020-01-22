@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.ecs.components;
+package com.mineinabyss.geary.ecs.components.effect;
 
 import com.badlogic.ashley.core.Component;
 

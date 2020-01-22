@@ -5,8 +5,8 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.google.common.collect.ImmutableList;
-import com.mineinabyss.geary.ecs.components.Activated;
-import com.mineinabyss.geary.ecs.components.Equipped;
+import com.mineinabyss.geary.ecs.components.control.Activated;
+import com.mineinabyss.geary.ecs.components.equipment.Equipped;
 import java.util.Optional;
 import org.bukkit.entity.Player;
 

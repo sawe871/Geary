@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.ecs.systems;
+package com.mineinabyss.geary.ecs.systems.rendering;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -23,12 +23,8 @@ public class RopeDisplaySystem extends IteratingSystem {
   protected void processEntity(Entity entity, float deltaTime) {
     Rope rope = ropeComponentMapper.get(entity);
 
-    Location start = rope.getStart();
-    Location end = rope.getEnd();
-
-    if (start == null || end == null) {
-      return;
-    }
+    Location start = rope.getStart().getLocation();
+    Location end = rope.getEnd().getLocation();
 
     Vector step = end.toVector().subtract(start.toVector()).normalize().multiply(.1);
     Vector drawLocation = start.toVector();
