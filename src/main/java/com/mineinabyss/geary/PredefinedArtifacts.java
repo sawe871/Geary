@@ -7,6 +7,7 @@ import com.mineinabyss.geary.ecs.components.effect.Explosion;
 import com.mineinabyss.geary.ecs.components.equipment.Equippable;
 import com.mineinabyss.geary.ecs.components.grappling.GrapplingHook;
 import com.mineinabyss.geary.ecs.components.rendering.DisplayState;
+import org.bukkit.Color;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class PredefinedArtifacts {
@@ -23,10 +24,11 @@ public class PredefinedArtifacts {
     return new Entity().add(new ClimbingRopeCreator(10)).add(new Equippable(EquipmentSlot.HAND));
   }
 
-  public static Entity createGrapplingHook() {
+  public static Entity createGrapplingHook(double speedo, int staticModel, int firingModel,
+      Color color, int hookModel) {
     return new Entity()
-        .add(new GrapplingHook())
-        .add(new DisplayState(3))
+        .add(new GrapplingHook(speedo, staticModel, firingModel, color, hookModel))
+        .add(new DisplayState(staticModel))
         .add(new Equippable(EquipmentSlot.HAND));
   }
 }

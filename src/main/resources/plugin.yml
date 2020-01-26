@@ -1,4 +1,9 @@
 name: Geary
 version: @version@
 main: com.mineinabyss.geary.Geary
-api-version: 1.13
+api-version: 1.15
+
+commands:
+  gib:
+    description: gib item
+    usage: /gib

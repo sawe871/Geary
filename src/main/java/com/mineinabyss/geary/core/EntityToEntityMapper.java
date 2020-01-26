@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.ecs;
+package com.mineinabyss.geary.core;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;

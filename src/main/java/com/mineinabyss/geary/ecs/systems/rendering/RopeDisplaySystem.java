@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.mineinabyss.geary.ecs.components.Rope;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
@@ -32,7 +31,7 @@ public class RopeDisplaySystem extends IteratingSystem {
     do {
       start.getWorld().spawnParticle(Particle.REDSTONE, drawLocation.getX(), drawLocation.getY(),
           drawLocation.getZ(), 1,
-          new DustOptions(Color.fromRGB(142, 89, 60), .2f));
+          new DustOptions(rope.getColor(), .2f));
       drawLocation.add(step);
     } while (drawLocation.distance(end.toVector()) > step.length());
   }

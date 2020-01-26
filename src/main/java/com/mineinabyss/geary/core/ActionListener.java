@@ -3,8 +3,7 @@ package com.mineinabyss.geary.core;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.mineinabyss.geary.PredefinedArtifacts;
-import com.mineinabyss.geary.ecs.EntityToEntityMapper;
-import com.mineinabyss.geary.ecs.EntityToEntityMapper.EntityData;
+import com.mineinabyss.geary.core.EntityToEntityMapper.EntityData;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.ProjectileHitGround;
 import com.mineinabyss.geary.ecs.components.control.Activated;
@@ -20,17 +19,21 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 public class ActionListener implements Listener {
 
   private final EntityToEntityMapper entityToEntityMapper;
   private final ProjectileMapper projectileMapper;
+  private final ItemUtil itemUtil;
   private Engine engine;
 
   public ActionListener(EntityToEntityMapper entityToEntityMapper,
-      ProjectileMapper projectileMapper, Engine engine) {
+      ProjectileMapper projectileMapper,
+      ItemUtil itemUtil, Engine engine) {
     this.entityToEntityMapper = entityToEntityMapper;
     this.projectileMapper = projectileMapper;
+    this.itemUtil = itemUtil;
     this.engine = engine;
   }
 
@@ -56,22 +59,25 @@ public class ActionListener implements Listener {
 
   @EventHandler
   public void onPlayerHoldItem(PlayerItemHeldEvent itemHeldEvent) {
+    int slot = itemHeldEvent.getNewSlot();
     EntityData data = entityToEntityMapper.getEntity(itemHeldEvent.getPlayer());
 
-    Entity climbingRope = PredefinedArtifacts.createGrapplingHook();
-    climbingRope.add(new Equipped(itemHeldEvent.getPlayer()));
+    ItemStack itemStack = itemHeldEvent.getPlayer().getInventory().getItem(slot);
 
-    data.getEquipment().getMainHand().ifPresent(engine::removeEntity);
-    data.getEquipment().setMainHand(climbingRope);
-    engine.addEntity(climbingRope);
+    data.getEquipment().getMainHand().ifPresent(entity -> entity.remove(Equipped.class));
+
+    itemUtil.getEcsEntityFromItem(itemStack)
+        .ifPresent(entity -> {
+              entity.add(new Equipped(itemHeldEvent.getPlayer()));
+              data.getEquipment().setMainHand(entity);
+            }
+        );
   }
 
   @EventHandler
   public void onProjectileHitEvent(ProjectileHitEvent projectileHitEvent) {
     Entity entity = projectileMapper.getEntity(projectileHitEvent.getEntity());
 
-    // TODO we do more than we want here. Events fire after updates, meaning next tick
-    // projectile might be null
     if (entity != null) {
       entity.add(new ProjectileHitGround());
       entity.add(new Position(projectileHitEvent.getEntity().getLocation()));

@@ -1,13 +1,11 @@
 package com.mineinabyss.geary.ecs.systems;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableSet;
 import com.mineinabyss.geary.core.ProjectileMapper;
 import com.mineinabyss.geary.ecs.components.Actor;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.Projectile;
-import com.mineinabyss.geary.ecs.components.ProjectileLauncher;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftSnowball;
@@ -20,15 +18,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ProjectileLaunchingSubSystem {
 
   private final ProjectileMapper projectileMapper;
-  private ComponentMapper<ProjectileLauncher> projectileLauncherComponentMapper = ComponentMapper
-      .getFor(ProjectileLauncher.class);
 
   public ProjectileLaunchingSubSystem(ProjectileMapper projectileMapper) {
     this.projectileMapper = projectileMapper;
   }
 
   // TODO player should be removed
-  public Entity launchProjectile(double speed, Player player) {
+  public Entity launchProjectile(double speed, int projModel, Player player) {
     org.bukkit.entity.Projectile projectile = player.launchProjectile(Snowball.class,
         player.getEyeLocation().getDirection().normalize()
             .multiply(speed));
@@ -38,7 +34,7 @@ public class ProjectileLaunchingSubSystem {
 
     ItemStack itemStack = new ItemStack(Material.SNOWBALL);
     ItemMeta itemMeta = Bukkit.getItemFactory().getItemMeta(Material.SNOWBALL);
-    itemMeta.setCustomModelData(1);
+    itemMeta.setCustomModelData(projModel);
     itemStack.setItemMeta(itemMeta);
 
     entitysnowball.setItem(CraftItemStack.asNMSCopy(itemStack));

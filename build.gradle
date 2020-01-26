@@ -27,6 +27,9 @@ dependencies {
     compileOnly group: 'org.spigotmc', name: 'spigot', version: '1.15.1-R0.1-SNAPSHOT'
     implementation group: 'com.badlogicgames.ashley', name: 'ashley', version: '1.7.3'
     implementation "com.google.auto.value:auto-value-annotations:1.7"
+    testImplementation "junit:junit:4.12"
+    testImplementation "org.mockito:mockito-core:3.2.4"
+    testImplementation group: 'org.spigotmc', name: 'spigot', version: '1.15.1-R0.1-SNAPSHOT'
     annotationProcessor "com.google.auto.value:auto-value:1.7"
 }
 
@@ -44,7 +47,7 @@ task copyJar(type: Copy) {
     into '/home/derongan/servers/1.15.1/plugins'
 }
 
-task createPack(type:Zip) {
+task createPack(type: Zip) {
     from './src/main/resources/pack'
     into '/'
     include '**/*'

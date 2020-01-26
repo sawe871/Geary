@@ -27,6 +27,9 @@ public class GrapplingHookExtendingSystem extends IteratingSystem {
   private ComponentMapper<DisplayState> displayStateComponentMapper = ComponentMapper
       .getFor(DisplayState.class);
 
+  private ComponentMapper<GrapplingHook> grapplingHookComponentMapper = ComponentMapper
+      .getFor(GrapplingHook.class);
+
   public GrapplingHookExtendingSystem(ProjectileLaunchingSubSystem projectileLaunchingSubSystem) {
     super(Family.all(GrapplingHook.class, Activated.class, Equipped.class).exclude(
         GrapplingHookExtended.class).get());
@@ -36,17 +39,19 @@ public class GrapplingHookExtendingSystem extends IteratingSystem {
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
     Player owner = equippedComponentMapper.get(entity).getOwner();
-    Entity launchedProjectile = projectileLaunchingSubSystem.launchProjectile(.7, owner);
+    GrapplingHook grapplingHook = grapplingHookComponentMapper.get(entity);
+    Entity launchedProjectile = projectileLaunchingSubSystem
+        .launchProjectile(grapplingHook.getFiringSpeed(), grapplingHook.getHookModel(), owner);
     getEngine().addEntity(launchedProjectile);
     Projectile projectile = projectileComponentMapper.get(launchedProjectile);
     org.bukkit.entity.Projectile mcProjectile = projectile
         .getProjectile();
     launchedProjectile.add(new Rope(() -> owner.getEyeLocation().add(0, -.5, 0),
-        mcProjectile::getLocation));
+        mcProjectile::getLocation, grapplingHook.getColor()));
     projectile.setCollisionComponents(() -> ImmutableSet.of(new PullToLocation()));
 
     if (displayStateComponentMapper.has(entity)) {
-      displayStateComponentMapper.get(entity).setModelNo(4);
+      displayStateComponentMapper.get(entity).setModelNo(grapplingHook.getExtendedModel());
     }
     entity.add(new GrapplingHookExtended(launchedProjectile));
     entity.remove(Activated.class);

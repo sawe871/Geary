@@ -28,6 +28,8 @@ public class GrapplingHookDisconnectingSystem extends IteratingSystem {
       .getFor(Activated.class);
   private ComponentMapper<PullToLocation> pullToLocationComponentMapper = ComponentMapper
       .getFor(PullToLocation.class);
+  private ComponentMapper<GrapplingHook> grapplingHookMapper = ComponentMapper
+      .getFor(GrapplingHook.class);
 
   public GrapplingHookDisconnectingSystem(ProjectileMapper projectileMapper) {
     super(Family.all(GrapplingHook.class, Equipped.class,
@@ -39,6 +41,7 @@ public class GrapplingHookDisconnectingSystem extends IteratingSystem {
   protected void processEntity(Entity entity, float deltaTime) {
     if (shouldRemove(entity)) {
       GrapplingHookExtended grapplingHookExtended = extendedMapper.get(entity);
+      GrapplingHook grapplingHook = grapplingHookMapper.get(entity);
 
       Entity projectile = grapplingHookExtended.getExtendedEntity();
 
@@ -52,7 +55,7 @@ public class GrapplingHookDisconnectingSystem extends IteratingSystem {
       getEngine().removeEntity(grapplingHookExtended.getExtendedEntity());
 
       if (displayStateComponentMapper.has(entity)) {
-        displayStateComponentMapper.get(entity).setModelNo(3);
+        displayStateComponentMapper.get(entity).setModelNo(grapplingHook.getStaticModel());
       }
       entity.remove(GrapplingHookExtended.class);
       entity.remove(Activated.class);
