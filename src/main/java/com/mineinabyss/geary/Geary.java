@@ -6,6 +6,7 @@ import com.mineinabyss.geary.core.ItemUtil;
 import com.mineinabyss.geary.core.ItemUtil.EntityInitializer;
 import com.mineinabyss.geary.core.ProjectileMapper;
 import com.mineinabyss.geary.ecs.EntityMapper;
+import com.mineinabyss.geary.ecs.components.equipment.Equipped;
 import com.mineinabyss.geary.ecs.systems.DegredationSystem;
 import com.mineinabyss.geary.ecs.systems.EntityRemovalSystem;
 import com.mineinabyss.geary.ecs.systems.ProjectileCollisionSystem;
@@ -62,7 +63,7 @@ public final class Geary extends JavaPlugin {
 //    getCommand("gib").setExecutor(itemGiverBro);
     getServer().getPluginManager()
         .registerEvents(new ActionListener(projectileMapper, itemUtil), this);
-    getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> engine.update(1), 0, 1);
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, this::doEngineUpdates, 0, 1);
   }
 
   public void attach(EntityInitializer entityInitializer, ItemStack itemStack) {
@@ -94,5 +95,17 @@ public final class Geary extends JavaPlugin {
     }
 
     return new File(getDataFolder(), "data.json");
+  }
+
+  private void doEngineUpdates() {
+
+    getServer().getOnlinePlayers().forEach(player -> {
+      ItemStack itemStack = player.getInventory().getItemInMainHand();
+
+      itemUtil.removeOrGet(itemStack, player.getInventory())
+          .ifPresent(entity -> entity.add(new Equipped(player)));
+    });
+
+    engine.update(1);
   }
 }

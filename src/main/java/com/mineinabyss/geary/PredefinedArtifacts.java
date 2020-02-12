@@ -10,11 +10,11 @@ import org.bukkit.Color;
 public class PredefinedArtifacts {
 
   public static Entity createGrapplingHook(double speedo, int staticModel, int firingModel,
-      Color color, int hookModel) {
+      Color color, int hookModel, int maxUses) {
     return new Entity()
         .add(new GrapplingHook(speedo, staticModel, firingModel, color, hookModel))
         .add(new DisplayState(staticModel))
-        .add(new Durability(5))
+        .add(new Durability(maxUses))
         .add(new Equippable());
   }
 }

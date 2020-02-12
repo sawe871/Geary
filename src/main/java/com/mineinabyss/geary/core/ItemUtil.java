@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -72,6 +73,15 @@ public class ItemUtil {
         .set(componentIdKey, PersistentDataType.BYTE_ARRAY, getBytesFromUUID(uuid));
 
     itemStack.setItemMeta(itemMeta);
+  }
+
+  public Optional<Entity> removeOrGet(ItemStack itemStack, Inventory inventory) {
+    try {
+      return getEcsEntityFromItem(itemStack);
+    } catch (ItemDegradedException e) {
+      inventory.remove(itemStack);
+      return Optional.empty();
+    }
   }
 
   public static byte[] getBytesFromUUID(UUID uuid) {

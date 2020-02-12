@@ -36,10 +36,10 @@ public class ItemGiverBro implements TabExecutor {
       EntityInitializer entityInitializer;
       if (speedo < 1.5) {
         entityInitializer = () -> PredefinedArtifacts
-            .createGrapplingHook(finalSpeedo, 3, 4, Color.fromRGB(142, 89, 60), 1);
+            .createGrapplingHook(finalSpeedo, 3, 4, Color.fromRGB(142, 89, 60), 1, 5);
       } else {
         entityInitializer = () -> PredefinedArtifacts
-            .createGrapplingHook(finalSpeedo, 5, 5, Color.fromRGB(202, 204, 206), 2);
+            .createGrapplingHook(finalSpeedo, 5, 5, Color.fromRGB(202, 204, 206), 2, 5);
       }
       ItemStack itemStack = itemUtil
           .createItemWithEcsEntity(entityInitializer,
