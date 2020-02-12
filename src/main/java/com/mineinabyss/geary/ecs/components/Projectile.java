@@ -1,29 +1,39 @@
 package com.mineinabyss.geary.ecs.components;
 
 import com.badlogic.ashley.core.Component;
-import java.util.Set;
-import java.util.function.Supplier;
+import com.google.common.base.Preconditions;
+import com.mineinabyss.geary.ComponentSupplier;
+import java.util.UUID;
+import org.bukkit.Bukkit;
 
 public class Projectile implements Component {
 
-  private org.bukkit.entity.Projectile projectile;
-  private Supplier<Set<Component>> collisionComponents;
+  private UUID projectile;
+  private ComponentSupplier collisionComponents;
+
   public Projectile(org.bukkit.entity.Projectile projectile,
-      Supplier<Set<Component>> onHitComponents) {
-    this.projectile = projectile;
+      ComponentSupplier onHitComponents) {
+    Preconditions.checkNotNull(projectile);
+    this.projectile = projectile.getUniqueId();
     this.collisionComponents = onHitComponents;
   }
 
-  public Supplier<Set<Component>> getCollisionComponents() {
+  public Projectile(UUID projectileUUID,
+      ComponentSupplier onHitComponents) {
+    this.projectile = projectileUUID;
+    this.collisionComponents = onHitComponents;
+  }
+
+  public ComponentSupplier getCollisionComponents() {
     return collisionComponents;
   }
 
   public org.bukkit.entity.Projectile getProjectile() {
-    return projectile;
+    return (org.bukkit.entity.Projectile) Bukkit.getEntity(projectile);
   }
 
   public void setCollisionComponents(
-      Supplier<Set<Component>> collisionComponents) {
+      ComponentSupplier collisionComponents) {
     this.collisionComponents = collisionComponents;
   }
 }

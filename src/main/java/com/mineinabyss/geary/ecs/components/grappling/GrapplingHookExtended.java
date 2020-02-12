@@ -1,17 +1,17 @@
 package com.mineinabyss.geary.ecs.components.grappling;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
+import com.mineinabyss.geary.ecs.EntityRef;
 
 public class GrapplingHookExtended implements Component {
 
-  Entity extended;
+  private EntityRef extended;
 
-  public GrapplingHookExtended(Entity extended) {
-    this.extended = extended;
+  public GrapplingHookExtended(EntityRef entityRef) {
+    this.extended = entityRef;
   }
 
-  public Entity getExtendedEntity() {
+  public EntityRef getExtendedEntity() {
     return extended;
   }
 }

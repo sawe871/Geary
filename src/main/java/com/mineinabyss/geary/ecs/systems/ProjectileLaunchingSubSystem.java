@@ -3,6 +3,7 @@ package com.mineinabyss.geary.ecs.systems;
 import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableSet;
 import com.mineinabyss.geary.core.ProjectileMapper;
+import com.mineinabyss.geary.ecs.EntityMapper;
 import com.mineinabyss.geary.ecs.components.Actor;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.Projectile;
@@ -18,9 +19,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ProjectileLaunchingSubSystem {
 
   private final ProjectileMapper projectileMapper;
+  private final EntityMapper entityMapper;
 
-  public ProjectileLaunchingSubSystem(ProjectileMapper projectileMapper) {
+  public ProjectileLaunchingSubSystem(ProjectileMapper projectileMapper,
+      EntityMapper entityMapper) {
     this.projectileMapper = projectileMapper;
+    this.entityMapper = entityMapper;
   }
 
   // TODO player should be removed
@@ -48,6 +52,8 @@ public class ProjectileLaunchingSubSystem {
     projectileEntity.add(new Projectile(projectile, ImmutableSet::of));
 
     projectileMapper.addProjectile(projectile, projectileEntity);
+
+    entityMapper.entityAdded(projectileEntity);
 
     return projectileEntity;
   }
