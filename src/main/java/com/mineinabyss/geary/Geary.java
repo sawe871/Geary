@@ -1,6 +1,7 @@
 package com.mineinabyss.geary;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.EntitySystem;
 import com.mineinabyss.geary.core.ActionListener;
 import com.mineinabyss.geary.core.ItemUtil;
 import com.mineinabyss.geary.core.ItemUtil.EntityInitializer;
@@ -69,10 +70,6 @@ public final class Geary extends JavaPlugin {
     getServer().getScheduler().scheduleSyncRepeatingTask(this, this::doEngineUpdates, 0, 1);
   }
 
-  public void attachToItemStack(EntityInitializer entityInitializer, ItemStack itemStack) {
-    itemUtil.attachToItemStack(entityInitializer, itemStack);
-  }
-
   @Override
   public void onDisable() {
     try {
@@ -115,5 +112,13 @@ public final class Geary extends JavaPlugin {
   public ShapedRecipe createRecipe(NamespacedKey key, EntityInitializer entityInitializer,
       ItemStack itemStack) {
     return new GearyRecipe(key, itemStack, this, entityInitializer);
+  }
+
+  public void attachToItemStack(EntityInitializer entityInitializer, ItemStack itemStack) {
+    itemUtil.attachToItemStack(entityInitializer, itemStack);
+  }
+
+  public void addSystem(EntitySystem entitySystem) {
+    engine.addSystem(entitySystem);
   }
 }
