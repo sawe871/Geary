@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.mineinabyss.geary.core.ItemUtil;
 import com.mineinabyss.geary.ecs.components.equipment.Durability;
 import com.mineinabyss.geary.ecs.components.equipment.Equipped;
 import com.mineinabyss.geary.ecs.components.rendering.DisplayState;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemDisplaySystem extends IteratingSystem {
 
+  private final ItemUtil itemUtil;
   private ComponentMapper<DisplayState> displayStateComponentMapper = ComponentMapper
       .getFor(DisplayState.class);
   private ComponentMapper<Durability> durabilityComponentMapper = ComponentMapper
@@ -24,8 +26,9 @@ public class ItemDisplaySystem extends IteratingSystem {
   private ComponentMapper<Equipped> equippedComponentMapper = ComponentMapper
       .getFor(Equipped.class);
 
-  public ItemDisplaySystem() {
+  public ItemDisplaySystem(ItemUtil itemUtil) {
     super(Family.all(Equipped.class).one(DisplayState.class, Durability.class).get());
+    this.itemUtil = itemUtil;
   }
 
   @Override
@@ -40,13 +43,19 @@ public class ItemDisplaySystem extends IteratingSystem {
             Player::getInventory).map(PlayerInventory::getItemInMainHand);
 
     if (equipped.isPresent() && equipped.get().hasItemMeta()) {
-      ItemMeta itemMeta = equipped.get().getItemMeta();
-      displayState
-          .map(DisplayState::getModelNo)
-          .ifPresent(itemMeta::setCustomModelData);
-      durability
-          .ifPresent(dur -> setDurability(dur, equipped.get(), itemMeta));
-      equipped.get().setItemMeta(itemMeta);
+
+      Optional<Entity> correspondingEntity = itemUtil.removeOrGet(equipped.get(),
+          equippedComponentMapper.get(entity).getOwner().getInventory());
+
+      if (correspondingEntity.isPresent() && correspondingEntity.get().equals(entity)) {
+        ItemMeta itemMeta = equipped.get().getItemMeta();
+        displayState
+            .map(DisplayState::getModelNo)
+            .ifPresent(itemMeta::setCustomModelData);
+        durability
+            .ifPresent(dur -> setDurability(dur, equipped.get(), itemMeta));
+        equipped.get().setItemMeta(itemMeta);
+      }
     }
   }
 

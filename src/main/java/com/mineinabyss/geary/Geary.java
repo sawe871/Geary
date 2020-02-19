@@ -23,7 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Geary extends JavaPlugin {
@@ -50,7 +52,7 @@ public final class Geary extends JavaPlugin {
     engine.addSystem(new EntityPullingSystem());
     engine.addSystem(new RopeDisplaySystem());
     engine.addSystem(new DegredationSystem());
-    engine.addSystem(new ItemDisplaySystem());
+    engine.addSystem(new ItemDisplaySystem(itemUtil));
     engine.addSystem(new EntityRemovalSystem());
 
     try {
@@ -61,12 +63,13 @@ public final class Geary extends JavaPlugin {
 
 //    ItemGiverBro itemGiverBro = new ItemGiverBro(itemUtil);
 //    getCommand("gib").setExecutor(itemGiverBro);
+
     getServer().getPluginManager()
         .registerEvents(new ActionListener(projectileMapper, itemUtil), this);
     getServer().getScheduler().scheduleSyncRepeatingTask(this, this::doEngineUpdates, 0, 1);
   }
 
-  public void attach(EntityInitializer entityInitializer, ItemStack itemStack) {
+  public void attachToItemStack(EntityInitializer entityInitializer, ItemStack itemStack) {
     itemUtil.attachToItemStack(entityInitializer, itemStack);
   }
 
@@ -107,5 +110,10 @@ public final class Geary extends JavaPlugin {
     });
 
     engine.update(1);
+  }
+
+  public ShapedRecipe createRecipe(NamespacedKey key, EntityInitializer entityInitializer,
+      ItemStack itemStack) {
+    return new GearyRecipe(key, itemStack, this, entityInitializer);
   }
 }

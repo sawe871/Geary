@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '5.0.0'
+    id 'com.github.johnrengelman.shadow'
 }
 
 group = pluginGroup
@@ -52,7 +52,7 @@ processResources {
 
 task copyJar(type: Copy) {
     from shadowJar // here it automatically reads jar file produced from jar task
-    into '/home/derongan/servers/1.15.1/plugins'
+    into '/home/derongan/servers/1.15.2/plugins'
 }
 
 task createPack(type: Zip) {
@@ -60,7 +60,7 @@ task createPack(type: Zip) {
     into '/'
     include '**/*'
     archiveName 'geary-pack.zip'
-    destinationDir file('/home/derongan/.local/share/multimc/instances/1.15.1/.minecraft/resourcepacks/')
+    destinationDir file('/home/derongan/.local/share/multimc/instances/1.15.2/.minecraft/resourcepacks/')
 }
 
 build.dependsOn copyJar

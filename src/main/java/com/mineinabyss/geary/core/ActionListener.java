@@ -1,7 +1,6 @@
 package com.mineinabyss.geary.core;
 
 import com.badlogic.ashley.core.Entity;
-import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.mineinabyss.geary.core.ItemUtil.ItemDegradedException;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.ProjectileHitGround;
@@ -12,6 +11,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -47,9 +48,13 @@ public class ActionListener implements Listener {
   }
 
   @EventHandler
-  public void onItemDestroy(EntityRemoveFromWorldEvent event) {
+  public void onItemDamaged(EntityDamageEvent event) {
+    removeEntityIfNeeded(event);
+  }
 
-    if (event.getEntity() instanceof Item) {
+
+  private void removeEntityIfNeeded(EntityEvent event) {
+    if (event.getEntity() instanceof Item && event.getEntity().isDead()) {
       ItemStack itemStack = ((Item) event.getEntity()).getItemStack();
 
       try {
