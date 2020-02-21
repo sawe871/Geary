@@ -1,7 +1,17 @@
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+    }
+}
+
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
+
+apply plugin: "com.github.johnrengelman.shadow"
 
 group = pluginGroup
 version = pluginVersion
