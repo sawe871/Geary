@@ -27,9 +27,10 @@ import java.io.IOException;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Geary extends JavaPlugin {
+public final class Geary extends JavaPlugin implements GearyService {
 
   private ItemUtil itemUtil;
   private EntityMapper mapper;
@@ -68,6 +69,8 @@ public final class Geary extends JavaPlugin {
     getServer().getPluginManager()
         .registerEvents(new ActionListener(projectileMapper, itemUtil), this);
     getServer().getScheduler().scheduleSyncRepeatingTask(this, this::doEngineUpdates, 0, 1);
+    getServer().getServicesManager()
+        .register(GearyService.class, this, this, ServicePriority.Highest);
   }
 
   @Override
@@ -109,15 +112,18 @@ public final class Geary extends JavaPlugin {
     engine.update(1);
   }
 
+  @Override
   public ShapedRecipe createRecipe(NamespacedKey key, EntityInitializer entityInitializer,
       ItemStack itemStack) {
     return new GearyRecipe(key, itemStack, this, entityInitializer);
   }
 
+  @Override
   public void attachToItemStack(EntityInitializer entityInitializer, ItemStack itemStack) {
     itemUtil.attachToItemStack(entityInitializer, itemStack);
   }
 
+  @Override
   public void addSystem(EntitySystem entitySystem) {
     engine.addSystem(entitySystem);
   }
