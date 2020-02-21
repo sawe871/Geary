@@ -8,13 +8,17 @@ import com.mineinabyss.geary.ecs.components.Actor;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.effect.PullToLocation;
 import com.mineinabyss.geary.ecs.components.equipment.Degrading;
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
+import org.bukkit.block.BlockFace;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 public class EntityPullingSystem extends IteratingSystem {
 
-  private static final double MAX_SPEED = 3;
+  private static final double MAX_SPEED = 1.5;
 
   private ComponentMapper<Actor> actorComponentMapper = ComponentMapper.getFor(Actor.class);
   private ComponentMapper<Position> positionComponentMapper = ComponentMapper
@@ -30,14 +34,19 @@ public class EntityPullingSystem extends IteratingSystem {
     org.bukkit.entity.Entity who = actorComponentMapper.get(entity).getActor();
 
     if (who != null) {
+      Location target = position.getLocation();
 
-      Location target = position.getLocation().add(0, 1, 0);
+      if (target.getBlock().getRelative(BlockFace.UP).isPassable()) {
+        target = target.getBlock().getLocation().add(.5, 1, .5);
+      }
+
+      target.add(0,1,0);
 
       Location from = who.getLocation();
 
       double distance = from.distance(target);
 
-      double speed = Math.max(.7, Math.min(MAX_SPEED, distance / 10.0));
+      double speed = Math.max(.4, Math.min(MAX_SPEED, distance / 10.0));
 
       Vector normalize = target.toVector().subtract(from.toVector()).normalize();
       BoundingBox newbb = who.getBoundingBox().shift(normalize);
