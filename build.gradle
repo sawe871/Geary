@@ -13,6 +13,9 @@ plugins {
 
 apply plugin: "com.github.johnrengelman.shadow"
 
+//Put your plugins folder directory here! If it is left as '', jars will only be copied if the parent project has a path specified
+ext.plugin_path = ''
+
 group = pluginGroup
 version = pluginVersion
 
@@ -59,11 +62,22 @@ processResources {
     }
 }
 
-
-task copyJar(type: Copy) {
-    from shadowJar // here it automatically reads jar file produced from jar task
-    into '/home/derongan/servers/1.15.2/plugins'
-}
+//Move into plugins folder
+if (plugin_path != '') {
+    println("Copying to plugin directory")
+    task copyJar(type: Copy) {
+        from shadowJar // here it automatically reads jar file produced from jar task
+        into plugin_path
+    }
+    build.dependsOn copyJar
+} else if (parent != null && parent.hasProperty("plugin_path")) {
+    println("Copying to parent project's plugin directory")
+    task copyJar(type: Copy) {
+        from shadowJar
+        into parent.ext.plugin_path
+    }
+    build.dependsOn copyJar
+} else println("Skipped copyJar")
 
 //task createPack(type: Zip) {
 //    from './src/main/resources/pack'
