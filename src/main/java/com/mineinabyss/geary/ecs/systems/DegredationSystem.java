@@ -8,6 +8,9 @@ import com.mineinabyss.geary.ecs.components.Remove;
 import com.mineinabyss.geary.ecs.components.equipment.Degrading;
 import com.mineinabyss.geary.ecs.components.equipment.Durability;
 
+/**
+ * Lowers the durability of items that have the {@link Degrading} component.
+ */
 public class DegredationSystem extends IteratingSystem {
 
   private ComponentMapper<Durability> durabilityComponentMapper = ComponentMapper

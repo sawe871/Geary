@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.state.serializers;
+package com.mineinabyss.geary.state.adapters;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -14,6 +14,6 @@ public class EntityRefDeserializer implements JsonDeserializer<EntityRef> {
   public EntityRef deserialize(JsonElement jsonElement, Type type,
       JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
     return EntityRef
-        .create(UUID.randomUUID());//jsonElement.getAsJsonObject().get("entityId").getAsLong());
+        .create(UUID.fromString(jsonElement.getAsJsonObject().get("entityId").getAsString()));
   }
 }

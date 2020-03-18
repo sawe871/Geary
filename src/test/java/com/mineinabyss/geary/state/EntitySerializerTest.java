@@ -4,8 +4,8 @@ import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mineinabyss.geary.ecs.EntityMapper;
 import com.mineinabyss.geary.ecs.EntityRef;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import com.mineinabyss.geary.ecs.components.Projectile;
 import com.mineinabyss.geary.ecs.components.control.Activated;
 import com.mineinabyss.geary.ecs.components.grappling.GrapplingHook;
@@ -15,7 +15,7 @@ import org.bukkit.Color;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class SerializationUtilTest {
+public class EntitySerializerTest {
 
   @Ignore
   @Test
@@ -27,16 +27,16 @@ public class SerializationUtilTest {
     entity.add(new Activated());
     entity.add(new Projectile(UUID.randomUUID(), ImmutableSet::of));
 
-    EntityMapper entityMapper = new EntityMapper();
-    entityMapper.entityAdded(entity);
-    entityMapper.entityAdded(referencedEntity);
+    EntityToUUIDMapper entityToUUIDMapper = new EntityToUUIDMapper();
+    entityToUUIDMapper.entityAdded(entity);
+    entityToUUIDMapper.entityAdded(referencedEntity);
 
-    SerializationUtil serializationUtil = new SerializationUtil(entityMapper);
+    EntitySerializer entitySerializer = new EntitySerializer(entityToUUIDMapper);
 
-    System.out.println(serializationUtil.serialize(entity));
+    System.out.println(entitySerializer.serialize(entity));
 
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    System.out.println(gson.toJson(entityMapper));
+    System.out.println(gson.toJson(entityToUUIDMapper));
   }
 }

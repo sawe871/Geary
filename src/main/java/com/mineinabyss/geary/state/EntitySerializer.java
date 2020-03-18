@@ -12,31 +12,31 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-import com.mineinabyss.geary.ComponentSupplier;
-import com.mineinabyss.geary.ecs.EntityMapper;
+import com.mineinabyss.geary.ecs.ComponentSupplier;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
 
-public class SerializationUtil {
+public class EntitySerializer {
 
-  private final EntityMapper entityMapper;
+  private final EntityToUUIDMapper entityToUUIDMapper;
 
-  public SerializationUtil(EntityMapper entityMapper) {
-    this.entityMapper = entityMapper;
+  public EntitySerializer(EntityToUUIDMapper entityToUUIDMapper) {
+    this.entityToUUIDMapper = entityToUUIDMapper;
   }
 
-  public String serializeEntityMap(EntityMapper entityMapper) {
+  public String serializeEntityMap(EntityToUUIDMapper entityToUUIDMapper) {
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    return gson.toJson(entityMapper);
+    return gson.toJson(entityToUUIDMapper);
   }
 
   public JsonElement serialize(Entity entity) {
     Type listType = new TypeToken<List<Component>>() {
     }.getType();
     Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Entity.class, new EntityIdSerializer(entityMapper))
+        .registerTypeAdapter(Entity.class, new EntityIdSerializer(entityToUUIDMapper))
         .registerTypeAdapter(ComponentSupplier.class, new ComponentSupplierSerializer())
         .registerTypeAdapter(listType,
             new ComponentSerializer())
@@ -45,22 +45,22 @@ public class SerializationUtil {
     JsonObject object = new JsonObject();
     object
         .add("components", gson.toJsonTree(ImmutableList.copyOf(entity.getComponents()), listType));
-    object.add("id", new JsonPrimitive(entityMapper.getId(entity).toString()));
+    object.add("id", new JsonPrimitive(entityToUUIDMapper.getId(entity).toString()));
 
     return gson.toJsonTree(object);
   }
 
   private static class EntityIdSerializer implements JsonSerializer<Entity> {
 
-    private final EntityMapper entityMapper;
+    private final EntityToUUIDMapper entityToUUIDMapper;
 
-    public EntityIdSerializer(EntityMapper entityMapper) {
-      this.entityMapper = entityMapper;
+    public EntityIdSerializer(EntityToUUIDMapper entityToUUIDMapper) {
+      this.entityToUUIDMapper = entityToUUIDMapper;
     }
 
     @Override
     public JsonElement serialize(Entity src, Type typeOfSrc, JsonSerializationContext context) {
-      return new JsonPrimitive(entityMapper.getId(src).toString());
+      return new JsonPrimitive(entityToUUIDMapper.getId(src).toString());
     }
   }
 

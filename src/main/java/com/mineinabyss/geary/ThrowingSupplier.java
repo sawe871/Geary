@@ -1,5 +1,8 @@
 package com.mineinabyss.geary;
 
+/**
+ * General purpose supplier that wraps checked exceptions.
+ */
 @FunctionalInterface
 public interface ThrowingSupplier<T> {
 

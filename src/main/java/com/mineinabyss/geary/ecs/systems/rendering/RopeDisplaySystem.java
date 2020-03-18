@@ -10,6 +10,9 @@ import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.util.Vector;
 
+/**
+ * System that draws ropes using particles.
+ */
 public class RopeDisplaySystem extends IteratingSystem {
 
   ComponentMapper<Rope> ropeComponentMapper = ComponentMapper.getFor(Rope.class);

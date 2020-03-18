@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.state.serializers;
+package com.mineinabyss.geary.state.adapters;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;

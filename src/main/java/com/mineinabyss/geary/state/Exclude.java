@@ -1,4 +1,4 @@
-package com.mineinabyss.geary;
+package com.mineinabyss.geary.state;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

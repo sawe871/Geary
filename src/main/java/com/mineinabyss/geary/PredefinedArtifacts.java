@@ -7,6 +7,9 @@ import com.mineinabyss.geary.ecs.components.grappling.GrapplingHook;
 import com.mineinabyss.geary.ecs.components.rendering.DisplayState;
 import org.bukkit.Color;
 
+/**
+ * TODO(https://github.com/MineInAbyss/geary/issues/11): Move to configuration
+ */
 public class PredefinedArtifacts {
 
   public static Entity createGrapplingHook(double speedo, int staticModel, int firingModel,

@@ -6,8 +6,8 @@ import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mineinabyss.geary.ecs.EntityMapper;
 import com.mineinabyss.geary.ecs.EntityRef;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import com.mineinabyss.geary.ecs.components.Projectile;
 import com.mineinabyss.geary.ecs.components.control.Activated;
 import com.mineinabyss.geary.ecs.components.grappling.GrapplingHook;
@@ -17,7 +17,7 @@ import org.bukkit.Color;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class DeserialationUtilTest {
+public class EntityDeserializerTest {
 
   @Ignore
   @Test
@@ -28,22 +28,23 @@ public class DeserialationUtilTest {
     entity.add(new GrapplingHookExtended(EntityRef.create(UUID.randomUUID())));
     entity.add(new Projectile(UUID.randomUUID(), ImmutableSet::of));
 
-    EntityMapper entityMapper = new EntityMapper();
-    entityMapper.entityAdded(entity);
-    SerializationUtil serializationUtil = new SerializationUtil(entityMapper);
+    EntityToUUIDMapper entityToUUIDMapper = new EntityToUUIDMapper();
+    entityToUUIDMapper.entityAdded(entity);
+    EntitySerializer entitySerializer = new EntitySerializer(entityToUUIDMapper);
 
-    String entityIdListenerJson = serializationUtil.serializeEntityMap(entityMapper);
+    String entityIdListenerJson = entitySerializer.serializeEntityMap(entityToUUIDMapper);
 
     Gson gson = new GsonBuilder().create();
     String result = gson
-        .toJson(serializationUtil.serialize(entity));
-    DeserialationUtil deserialationUtil = new DeserialationUtil();
+        .toJson(entitySerializer.serialize(entity));
+    EntityDeserializer entityDeserializer = new EntityDeserializer();
 
-    EntityMapper deserilizedListner = deserialationUtil.deserializeIdMap(entityIdListenerJson);
+    EntityToUUIDMapper deserilizedListner = entityDeserializer
+        .deserializeIdMap(entityIdListenerJson);
 
-    Entity entity1 = deserialationUtil.deserializeEntity(result);
-    entityMapper.entityAdded(entity1);
+    Entity entity1 = entityDeserializer.deserializeEntity(result);
+    entityToUUIDMapper.entityAdded(entity1);
     assertThat(result)
-        .isEqualTo(gson.toJson(new SerializationUtil(deserilizedListner).serialize(entity1)));
+        .isEqualTo(gson.toJson(new EntitySerializer(deserilizedListner).serialize(entity1)));
   }
 }

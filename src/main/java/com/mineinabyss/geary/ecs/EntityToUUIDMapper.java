@@ -5,19 +5,22 @@ import static com.google.common.base.Preconditions.checkState;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.google.common.collect.ImmutableMap;
-import com.mineinabyss.geary.Exclude;
+import com.mineinabyss.geary.state.Exclude;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class EntityMapper implements EntityListener {
+/**
+ * Bidirectional map of ECS entities to Minecraft objects with UUIDs.
+ */
+public class EntityToUUIDMapper implements EntityListener {
 
   private Map<UUID, Entity> idToEntityMap;
 
   @Exclude
   private Map<Entity, UUID> entityToIdMap;
 
-  public EntityMapper() {
+  public EntityToUUIDMapper() {
     idToEntityMap = new HashMap<>();
     entityToIdMap = new HashMap<>();
   }
@@ -44,7 +47,7 @@ public class EntityMapper implements EntityListener {
   }
 
   @Override
-  public void entityRemoved(com.badlogic.ashley.core.Entity entity) {
+  public void entityRemoved(Entity entity) {
     UUID uuid = entityToIdMap.remove(entity);
     idToEntityMap.remove(uuid);
   }

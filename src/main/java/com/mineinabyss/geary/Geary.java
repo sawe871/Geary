@@ -5,8 +5,8 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.mineinabyss.geary.core.ActionListener;
 import com.mineinabyss.geary.core.ItemUtil;
 import com.mineinabyss.geary.core.ItemUtil.EntityInitializer;
-import com.mineinabyss.geary.core.ProjectileMapper;
-import com.mineinabyss.geary.ecs.EntityMapper;
+import com.mineinabyss.geary.core.ProjectileToEntityMapper;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import com.mineinabyss.geary.ecs.components.equipment.Equipped;
 import com.mineinabyss.geary.ecs.systems.DegredationSystem;
 import com.mineinabyss.geary.ecs.systems.EntityRemovalSystem;
@@ -17,8 +17,8 @@ import com.mineinabyss.geary.ecs.systems.rendering.ItemDisplaySystem;
 import com.mineinabyss.geary.ecs.systems.rendering.RopeDisplaySystem;
 import com.mineinabyss.geary.ecs.systems.tools.GrapplingHookDisconnectingSystem;
 import com.mineinabyss.geary.ecs.systems.tools.GrapplingHookExtendingSystem;
-import com.mineinabyss.geary.state.EntityMapperLoader;
-import com.mineinabyss.geary.state.EntityMapperSaver;
+import com.mineinabyss.geary.state.PersistentEntityReader;
+import com.mineinabyss.geary.state.PersistentEntityWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -33,23 +33,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Geary extends JavaPlugin implements GearyService {
 
   private ItemUtil itemUtil;
-  private EntityMapper mapper;
+  private EntityToUUIDMapper mapper;
   private Engine engine;
 
   @Override
   public void onEnable() {
     // Plugin startup logic
-    mapper = new EntityMapper();
+    mapper = new EntityToUUIDMapper();
     engine = new Engine();
-    ProjectileMapper projectileMapper = new ProjectileMapper();
-    ProjectileLaunchingSubSystem pslss = new ProjectileLaunchingSubSystem(projectileMapper,
+    ProjectileToEntityMapper projectileToEntityMapper = new ProjectileToEntityMapper();
+    ProjectileLaunchingSubSystem pslss = new ProjectileLaunchingSubSystem(projectileToEntityMapper,
         mapper);
     itemUtil = new ItemUtil(this, mapper, engine);
 
     engine.addEntityListener(mapper);
 
     engine.addSystem(new GrapplingHookExtendingSystem(pslss, mapper));
-    engine.addSystem(new GrapplingHookDisconnectingSystem(projectileMapper, mapper));
+    engine.addSystem(new GrapplingHookDisconnectingSystem(projectileToEntityMapper, mapper));
     engine.addSystem(new ProjectileCollisionSystem());
     engine.addSystem(new EntityPullingSystem());
     engine.addSystem(new RopeDisplaySystem());
@@ -58,7 +58,7 @@ public final class Geary extends JavaPlugin implements GearyService {
     engine.addSystem(new EntityRemovalSystem());
 
     try {
-      new EntityMapperLoader(mapper, engine).loadEntityMapper(new FileReader(getConfigFile()));
+      new PersistentEntityReader(mapper, engine).loadEntityMapper(new FileReader(getConfigFile()));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -67,7 +67,7 @@ public final class Geary extends JavaPlugin implements GearyService {
 //    getCommand("gib").setExecutor(itemGiverBro);
 
     getServer().getPluginManager()
-        .registerEvents(new ActionListener(projectileMapper, itemUtil), this);
+        .registerEvents(new ActionListener(projectileToEntityMapper, itemUtil), this);
     getServer().getScheduler().scheduleSyncRepeatingTask(this, this::doEngineUpdates, 0, 1);
     getServer().getServicesManager()
         .register(GearyService.class, this, this, ServicePriority.Highest);
@@ -85,7 +85,7 @@ public final class Geary extends JavaPlugin implements GearyService {
   private void dumpConfig() throws IOException {
     File data = getConfigFile();
 
-    String json = new EntityMapperSaver(mapper).saveEntityMapper();
+    String json = new PersistentEntityWriter(mapper).saveEntityMapper();
 
     FileWriter writer = new FileWriter(data);
     writer.write(json);

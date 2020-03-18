@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.state.serializers;
+package com.mineinabyss.geary.state.adapters;
 
 import static com.mineinabyss.geary.ThrowingSupplier.unchecked;
 

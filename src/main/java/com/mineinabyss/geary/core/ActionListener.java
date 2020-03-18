@@ -17,13 +17,16 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Listener that activates/deactivates ECS entities attached to items or projectiles.
+ */
 public class ActionListener implements Listener {
 
-  private final ProjectileMapper projectileMapper;
+  private final ProjectileToEntityMapper projectileToEntityMapper;
   private final ItemUtil itemUtil;
 
-  public ActionListener(ProjectileMapper projectileMapper, ItemUtil itemUtil) {
-    this.projectileMapper = projectileMapper;
+  public ActionListener(ProjectileToEntityMapper projectileToEntityMapper, ItemUtil itemUtil) {
+    this.projectileToEntityMapper = projectileToEntityMapper;
     this.itemUtil = itemUtil;
   }
 
@@ -68,12 +71,12 @@ public class ActionListener implements Listener {
 
   @EventHandler
   public void onProjectileHitEvent(ProjectileHitEvent projectileHitEvent) {
-    Entity entity = projectileMapper.getEntity(projectileHitEvent.getEntity());
+    Entity entity = projectileToEntityMapper.getEntity(projectileHitEvent.getEntity());
 
     if (entity != null) {
       entity.add(new ProjectileHitGround());
       entity.add(new Position(projectileHitEvent.getEntity().getLocation()));
-      projectileMapper.removeProjectile(projectileHitEvent.getEntity());
+      projectileToEntityMapper.removeProjectile(projectileHitEvent.getEntity());
     }
   }
 }

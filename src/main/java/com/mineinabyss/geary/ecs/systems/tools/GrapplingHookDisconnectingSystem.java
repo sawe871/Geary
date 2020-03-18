@@ -4,8 +4,8 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.mineinabyss.geary.core.ProjectileMapper;
-import com.mineinabyss.geary.ecs.EntityMapper;
+import com.mineinabyss.geary.core.ProjectileToEntityMapper;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import com.mineinabyss.geary.ecs.components.Projectile;
 import com.mineinabyss.geary.ecs.components.control.Activated;
 import com.mineinabyss.geary.ecs.components.effect.PullToLocation;
@@ -15,10 +15,13 @@ import com.mineinabyss.geary.ecs.components.grappling.GrapplingHook;
 import com.mineinabyss.geary.ecs.components.grappling.GrapplingHookExtended;
 import com.mineinabyss.geary.ecs.components.rendering.DisplayState;
 
+/**
+ * Disconnects grappling hooks from the ground.
+ */
 public class GrapplingHookDisconnectingSystem extends IteratingSystem {
 
-  private final ProjectileMapper projectileMapper;
-  private final EntityMapper entityMapper;
+  private final ProjectileToEntityMapper projectileToEntityMapper;
+  private final EntityToUUIDMapper entityToUUIDMapper;
   private ComponentMapper<Projectile> projectileComponentMapper = ComponentMapper
       .getFor(Projectile.class);
   private ComponentMapper<DisplayState> displayStateComponentMapper = ComponentMapper
@@ -34,17 +37,17 @@ public class GrapplingHookDisconnectingSystem extends IteratingSystem {
   private ComponentMapper<Durability> durabilityComponentMapper = ComponentMapper
       .getFor(Durability.class);
 
-  public GrapplingHookDisconnectingSystem(ProjectileMapper projectileMapper,
-      EntityMapper entityMapper) {
+  public GrapplingHookDisconnectingSystem(ProjectileToEntityMapper projectileToEntityMapper,
+      EntityToUUIDMapper entityToUUIDMapper) {
     super(Family.all(GrapplingHook.class, GrapplingHookExtended.class).get());
-    this.projectileMapper = projectileMapper;
-    this.entityMapper = entityMapper;
+    this.projectileToEntityMapper = projectileToEntityMapper;
+    this.entityToUUIDMapper = entityToUUIDMapper;
   }
 
   @Override
   protected void processEntity(Entity entity, float deltaTime) {
     GrapplingHookExtended grapplingHookExtended = extendedMapper.get(entity);
-    Entity projectile = entityMapper.getEntity(grapplingHookExtended.getExtendedEntity());
+    Entity projectile = entityToUUIDMapper.getEntity(grapplingHookExtended.getExtendedEntity());
 
     if (shouldRemove(entity, projectile)) {
       GrapplingHook grapplingHook = grapplingHookMapper.get(entity);
@@ -53,7 +56,7 @@ public class GrapplingHookDisconnectingSystem extends IteratingSystem {
           && projectileComponentMapper.get(projectile).getProjectile() != null) {
         org.bukkit.entity.Projectile mcProj = projectileComponentMapper.get(projectile)
             .getProjectile();
-        projectileMapper.removeProjectile(mcProj);
+        projectileToEntityMapper.removeProjectile(mcProj);
         mcProj.remove();
       } else {
         // Since there was not an associated projectile, the hook made contact

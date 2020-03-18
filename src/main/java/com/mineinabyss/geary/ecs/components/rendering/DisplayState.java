@@ -2,6 +2,9 @@ package com.mineinabyss.geary.ecs.components.rendering;
 
 import com.badlogic.ashley.core.Component;
 
+/**
+ * Information about what model to display for an item or entity.
+ */
 public class DisplayState implements Component {
 
   private int modelNo;

@@ -8,14 +8,14 @@ import com.mineinabyss.geary.ecs.components.Actor;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.effect.PullToLocation;
 import com.mineinabyss.geary.ecs.components.equipment.Degrading;
-import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
+/**
+ * System that pulls MC entities around based on associated ECS entities.
+ */
 public class EntityPullingSystem extends IteratingSystem {
 
   private static final double MAX_SPEED = 1.5;

@@ -5,8 +5,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.google.common.collect.ImmutableSet;
-import com.mineinabyss.geary.ecs.EntityMapper;
 import com.mineinabyss.geary.ecs.EntityRef;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import com.mineinabyss.geary.ecs.components.Projectile;
 import com.mineinabyss.geary.ecs.components.Rope;
 import com.mineinabyss.geary.ecs.components.control.Activated;
@@ -19,10 +19,13 @@ import com.mineinabyss.geary.ecs.systems.ProjectileLaunchingSubSystem;
 import java.util.Optional;
 import org.bukkit.entity.Player;
 
+/**
+ * Extends grappling hooks.
+ */
 public class GrapplingHookExtendingSystem extends IteratingSystem {
 
   private final ProjectileLaunchingSubSystem projectileLaunchingSubSystem;
-  private final EntityMapper entityMapper;
+  private final EntityToUUIDMapper entityToUUIDMapper;
   private ComponentMapper<Equipped> equippedComponentMapper = ComponentMapper
       .getFor(Equipped.class);
   private ComponentMapper<Projectile> projectileComponentMapper = ComponentMapper
@@ -35,11 +38,11 @@ public class GrapplingHookExtendingSystem extends IteratingSystem {
       .getFor(GrapplingHook.class);
 
   public GrapplingHookExtendingSystem(ProjectileLaunchingSubSystem projectileLaunchingSubSystem,
-      EntityMapper entityMapper) {
+      EntityToUUIDMapper entityToUUIDMapper) {
     super(Family.all(GrapplingHook.class, Activated.class, Equipped.class).exclude(
         GrapplingHookExtended.class).get());
     this.projectileLaunchingSubSystem = projectileLaunchingSubSystem;
-    this.entityMapper = entityMapper;
+    this.entityToUUIDMapper = entityToUUIDMapper;
   }
 
   @Override
@@ -65,7 +68,8 @@ public class GrapplingHookExtendingSystem extends IteratingSystem {
       }
 
       entity.add(
-          new GrapplingHookExtended(EntityRef.create(entityMapper.getId(launchedProjectile))));
+          new GrapplingHookExtended(
+              EntityRef.create(entityToUUIDMapper.getId(launchedProjectile))));
     }
     entity.remove(Activated.class);
   }

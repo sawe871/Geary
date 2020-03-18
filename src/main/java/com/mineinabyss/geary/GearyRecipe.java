@@ -14,12 +14,22 @@ import org.bukkit.craftbukkit.v1_15_R1.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
+/**
+ * An implementation of a {@link org.bukkit.inventory.ShapedRecipe} that can attach an ECS entity to
+ * each output ItemStack.
+ * <p>
+ * This is necessary because the default ShapedRecipe clones the provided output ItemStack for each
+ * new item. This means that if the UUID is set on the initial ItemStack, the same UUID will be used
+ * for all outputs of this recipe.
+ * <p>
+ * TODO(https://github.com/MineInAbyss/geary/issues/10): handle multiple versions of NMS
+ */
 public class GearyRecipe extends CraftShapedRecipe {
 
-  private Geary geary;
+  private GearyService geary;
   private EntityInitializer entityInitializer;
 
-  public GearyRecipe(NamespacedKey key, ItemStack base, Geary geary,
+  public GearyRecipe(NamespacedKey key, ItemStack base, GearyService geary,
       EntityInitializer entityInitializer) {
     super(key, base);
     this.geary = geary;
@@ -37,7 +47,7 @@ public class GearyRecipe extends CraftShapedRecipe {
       String row = shape[i];
 
       for (int j = 0; j < row.length(); ++j) {
-        data.set(i * width + j, this.toNMS((RecipeChoice) ingred.get(row.charAt(j)), false));
+        data.set(i * width + j, this.toNMS(ingred.get(row.charAt(j)), false));
       }
     }
 
@@ -50,12 +60,12 @@ public class GearyRecipe extends CraftShapedRecipe {
 
   private static class GearyShapedRecipes extends ShapedRecipes {
 
-    private final Geary geary;
+    private final GearyService geary;
     private final EntityInitializer entityInitializer;
 
     public GearyShapedRecipes(MinecraftKey minecraftkey, String s, int i, int j,
         NonNullList<RecipeItemStack> nonnulllist,
-        net.minecraft.server.v1_15_R1.ItemStack itemstack, Geary geary,
+        net.minecraft.server.v1_15_R1.ItemStack itemstack, GearyService geary,
         EntityInitializer entityInitializer) {
       super(minecraftkey, s, i, j, nonnulllist, itemstack);
       this.geary = geary;

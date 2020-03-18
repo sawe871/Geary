@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.UUID;
 import org.bukkit.entity.Projectile;
 
-public class ProjectileMapper {
+public class ProjectileToEntityMapper {
 
   private Map<UUID, Entity> projectileMap;
 
-  public ProjectileMapper() {
+  public ProjectileToEntityMapper() {
     projectileMap = new HashMap<>();
   }
 

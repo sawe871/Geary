@@ -2,7 +2,7 @@ package com.mineinabyss.geary.ecs.components;
 
 import com.badlogic.ashley.core.Component;
 import com.google.common.base.Preconditions;
-import com.mineinabyss.geary.ComponentSupplier;
+import com.mineinabyss.geary.ecs.ComponentSupplier;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 

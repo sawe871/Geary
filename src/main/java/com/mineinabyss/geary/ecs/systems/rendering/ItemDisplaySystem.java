@@ -15,6 +15,9 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+/**
+ * System that updates display models and durability for items associated with ECS entities.
+ */
 public class ItemDisplaySystem extends IteratingSystem {
 
   private final ItemUtil itemUtil;

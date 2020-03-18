@@ -1,11 +1,11 @@
-package com.mineinabyss.geary.state.serializers;
+package com.mineinabyss.geary.state.adapters;
 
 import com.badlogic.ashley.core.Component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.mineinabyss.geary.ComponentSupplier;
+import com.mineinabyss.geary.ecs.ComponentSupplier;
 import java.lang.reflect.Type;
 import java.util.Set;
 

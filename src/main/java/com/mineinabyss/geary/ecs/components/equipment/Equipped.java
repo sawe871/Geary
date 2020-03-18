@@ -16,6 +16,9 @@ public class Equipped implements Component {
     this.owner = owner.getUniqueId();
   }
 
+  /**
+   * The player that has this entity equipped.
+   */
   public Player getOwner() {
     return Bukkit.getPlayer(owner);
   }

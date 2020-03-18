@@ -2,6 +2,9 @@ package com.mineinabyss.geary.ecs.components.equipment;
 
 import com.badlogic.ashley.core.Component;
 
+/**
+ * Stores an entities current degredation levels, as well as maximum uses.
+ */
 public class Durability implements Component {
 
   private int maxUses;

@@ -2,7 +2,7 @@ package com.mineinabyss.geary.core;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.mineinabyss.geary.ecs.EntityMapper;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,13 +18,13 @@ import org.bukkit.plugin.Plugin;
 public class ItemUtil {
 
   private final NamespacedKey componentIdKey;
-  private final EntityMapper entityMapper;
+  private final EntityToUUIDMapper entityToUUIDMapper;
   private Engine engine;
 
-  public ItemUtil(Plugin plugin, EntityMapper entityMapper,
+  public ItemUtil(Plugin plugin, EntityToUUIDMapper entityToUUIDMapper,
       Engine engine) {
     componentIdKey = new NamespacedKey(plugin, "uuid");
-    this.entityMapper = entityMapper;
+    this.entityToUUIDMapper = entityToUUIDMapper;
     this.engine = engine;
   }
 
@@ -37,7 +37,7 @@ public class ItemUtil {
         Optional<UUID> uuid = Optional.ofNullable(itemMeta.getPersistentDataContainer()
             .get(componentIdKey, PersistentDataType.BYTE_ARRAY)).map(ItemUtil::getUUIDFromBytes);
 
-        Optional<Entity> entity = uuid.map(entityMapper::getEntity);
+        Optional<Entity> entity = uuid.map(entityToUUIDMapper::getEntity);
 
         // If this has a UUID but no mapping, kill it.
         if (!entity.isPresent()) {
@@ -66,7 +66,7 @@ public class ItemUtil {
     Entity entity = entityInitializer.initializeEntity();
 
     engine.addEntity(entity);
-    UUID uuid = entityMapper.getId(entity);
+    UUID uuid = entityToUUIDMapper.getId(entity);
 
     ItemMeta itemMeta = itemStack.getItemMeta();
     itemMeta.getPersistentDataContainer()

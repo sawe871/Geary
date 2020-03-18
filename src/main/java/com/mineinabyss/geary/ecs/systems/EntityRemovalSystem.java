@@ -5,6 +5,9 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.mineinabyss.geary.ecs.components.Remove;
 
+/**
+ * Removes entities that are marked with {@link Remove}. This system should run last.
+ */
 public class EntityRemovalSystem extends IteratingSystem {
 
   public EntityRemovalSystem() {

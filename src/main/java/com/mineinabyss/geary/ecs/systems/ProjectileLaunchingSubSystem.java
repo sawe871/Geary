@@ -2,8 +2,8 @@ package com.mineinabyss.geary.ecs.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.google.common.collect.ImmutableSet;
-import com.mineinabyss.geary.core.ProjectileMapper;
-import com.mineinabyss.geary.ecs.EntityMapper;
+import com.mineinabyss.geary.core.ProjectileToEntityMapper;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import com.mineinabyss.geary.ecs.components.Actor;
 import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.Projectile;
@@ -18,13 +18,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ProjectileLaunchingSubSystem {
 
-  private final ProjectileMapper projectileMapper;
-  private final EntityMapper entityMapper;
+  private final ProjectileToEntityMapper projectileToEntityMapper;
+  private final EntityToUUIDMapper entityToUUIDMapper;
 
-  public ProjectileLaunchingSubSystem(ProjectileMapper projectileMapper,
-      EntityMapper entityMapper) {
-    this.projectileMapper = projectileMapper;
-    this.entityMapper = entityMapper;
+  public ProjectileLaunchingSubSystem(ProjectileToEntityMapper projectileToEntityMapper,
+      EntityToUUIDMapper entityToUUIDMapper) {
+    this.projectileToEntityMapper = projectileToEntityMapper;
+    this.entityToUUIDMapper = entityToUUIDMapper;
   }
 
   // TODO player should be removed
@@ -51,9 +51,9 @@ public class ProjectileLaunchingSubSystem {
 
     projectileEntity.add(new Projectile(projectile, ImmutableSet::of));
 
-    projectileMapper.addProjectile(projectile, projectileEntity);
+    projectileToEntityMapper.addProjectile(projectile, projectileEntity);
 
-    entityMapper.entityAdded(projectileEntity);
+    entityToUUIDMapper.entityAdded(projectileEntity);
 
     return projectileEntity;
   }
