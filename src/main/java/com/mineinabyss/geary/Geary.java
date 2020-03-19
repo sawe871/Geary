@@ -1,5 +1,7 @@
 package com.mineinabyss.geary;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.mineinabyss.geary.core.ActionListener;
@@ -19,11 +21,15 @@ import com.mineinabyss.geary.ecs.systems.tools.GrapplingHookDisconnectingSystem;
 import com.mineinabyss.geary.ecs.systems.tools.GrapplingHookExtendingSystem;
 import com.mineinabyss.geary.state.PersistentEntityReader;
 import com.mineinabyss.geary.state.PersistentEntityWriter;
+import com.mineinabyss.geary.state.RecipeReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -35,6 +41,9 @@ public final class Geary extends JavaPlugin implements GearyService {
   private ItemUtil itemUtil;
   private EntityToUUIDMapper mapper;
   private Engine engine;
+  private static final String PERSISTENCE_FILE_NAME = "data.json";
+  private static final String RECIPES_FILE_NAME = "recipes.json";
+  private static final String BACKUP_SUFFIX = ".backup";
 
   @Override
   public void onEnable() {
@@ -58,13 +67,20 @@ public final class Geary extends JavaPlugin implements GearyService {
     engine.addSystem(new EntityRemovalSystem());
 
     try {
-      new PersistentEntityReader(mapper, engine).loadEntityMapper(new FileReader(getConfigFile()));
+      new PersistentEntityReader(mapper, engine)
+          .loadEntityMapper(new FileReader(getConfigFileByName(PERSISTENCE_FILE_NAME)));
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      getLogger().info(String
+          .format("Missing Persistence File, %s, no entities loaded.", PERSISTENCE_FILE_NAME));
     }
 
-//    ItemGiverBro itemGiverBro = new ItemGiverBro(itemUtil);
-//    getCommand("gib").setExecutor(itemGiverBro);
+    try {
+      Reader reader = new FileReader(getConfigFileByName(RECIPES_FILE_NAME));
+      new RecipeReader(this).readRecipes(reader).forEach(Bukkit::addRecipe);
+    } catch (FileNotFoundException e) {
+      getLogger().info(String
+          .format("Missing Recipes File, %s, no entities loaded.", RECIPES_FILE_NAME));
+    }
 
     getServer().getPluginManager()
         .registerEvents(new ActionListener(projectileToEntityMapper, itemUtil), this);
@@ -83,7 +99,11 @@ public final class Geary extends JavaPlugin implements GearyService {
   }
 
   private void dumpConfig() throws IOException {
-    File data = getConfigFile();
+    File data = getConfigFileByName(PERSISTENCE_FILE_NAME);
+
+    Files.copy(data.toPath(),
+        getConfigFileByName(PERSISTENCE_FILE_NAME + BACKUP_SUFFIX).toPath(),
+        REPLACE_EXISTING);
 
     String json = new PersistentEntityWriter(mapper).saveEntityMapper();
 
@@ -92,12 +112,11 @@ public final class Geary extends JavaPlugin implements GearyService {
     writer.close();
   }
 
-  private File getConfigFile() {
+  private File getConfigFileByName(String filename) {
     if (!getDataFolder().exists()) {
       getDataFolder().mkdirs();
     }
-
-    return new File(getDataFolder(), "data.json");
+    return new File(getDataFolder(), filename);
   }
 
   private void doEngineUpdates() {
