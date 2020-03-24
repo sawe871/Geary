@@ -9,6 +9,10 @@ import com.mineinabyss.geary.ecs.components.Position;
 import com.mineinabyss.geary.ecs.components.Projectile;
 import com.mineinabyss.geary.ecs.components.ProjectileHitGround;
 
+/**
+ * When an entity has a {@link ProjectileHitGround} component, this system adds on hit components to
+ * the entity.
+ */
 public class ProjectileCollisionSystem extends IteratingSystem {
 
   ComponentMapper<Projectile> projectileComponentMapper = ComponentMapper.getFor(Projectile.class);

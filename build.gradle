@@ -1,10 +1,25 @@
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+    }
+}
+
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '5.0.0'
+    id 'maven-publish'
 }
+
+apply plugin: "com.github.johnrengelman.shadow"
 
 group = pluginGroup
 version = pluginVersion
+
+if (project.hasProperty("buildNo")) {
+    version += "." + buildNo
+}
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -20,16 +35,41 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
+
+    maven {
+        name = "papermc"
+        url = "https://papermc.io/repo/repository/maven-public/"
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/MineInAbyss/Geary")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
 
 dependencies {
-    compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.15-R0.1-SNAPSHOT'
+    compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.15.1-R0.1-SNAPSHOT'
     compileOnly group: 'org.spigotmc', name: 'spigot', version: '1.15.1-R0.1-SNAPSHOT'
     implementation group: 'com.badlogicgames.ashley', name: 'ashley', version: '1.7.3'
     implementation "com.google.auto.value:auto-value-annotations:1.7"
     testImplementation "junit:junit:4.12"
     testImplementation "org.mockito:mockito-core:3.2.4"
     testImplementation group: 'org.spigotmc', name: 'spigot', version: '1.15.1-R0.1-SNAPSHOT'
+    testImplementation "org.reflections:reflections:0.9.12"
+    testImplementation "com.google.truth:truth:1.0.1"
     annotationProcessor "com.google.auto.value:auto-value:1.7"
 }
 
@@ -41,18 +81,12 @@ processResources {
     }
 }
 
-
-task copyJar(type: Copy) {
-    from shadowJar // here it automatically reads jar file produced from jar task
-    into '/home/derongan/servers/1.15.1/plugins'
+//Move into plugins folder
+if (project.hasProperty("plugin_path") && plugin_path) {
+    println("Copying to plugin directory $plugin_path")
+    task copyJar(type: Copy) {
+        from shadowJar // here it automatically reads jar file produced from jar task
+        into plugin_path
+    }
+    build.dependsOn copyJar
 }
-
-task createPack(type: Zip) {
-    from './src/main/resources/pack'
-    into '/'
-    include '**/*'
-    archiveName 'geary-pack.zip'
-    destinationDir file('/home/derongan/.local/share/multimc/instances/1.15.1/.minecraft/resourcepacks/')
-}
-
-build.dependsOn copyJar

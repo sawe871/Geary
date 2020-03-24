@@ -1,0 +1,8 @@
+{
+  "textures": {
+    "0": "items/one/file",
+    "1": "items/two/file",
+    "particle": "items/one/file"
+  },
+  "data": {}
+}

@@ -1,21 +1,20 @@
 package com.mineinabyss.geary.ecs.components;
 
 import com.badlogic.ashley.core.Component;
+import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 public class Actor implements Component {
 
-  private Entity actor;
+  private UUID actor;
 
   public Actor(Entity actor) {
-    this.actor = actor;
+    this.actor = actor.getUniqueId();
   }
 
   public Entity getActor() {
-    return actor;
+    return Bukkit.getEntity(actor);
   }
 
-  public void setActor(Entity actor) {
-    this.actor = actor;
-  }
 }

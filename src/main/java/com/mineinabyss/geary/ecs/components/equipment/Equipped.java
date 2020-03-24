@@ -1,6 +1,8 @@
 package com.mineinabyss.geary.ecs.components.equipment;
 
 import com.badlogic.ashley.core.Component;
+import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -8,13 +10,16 @@ import org.bukkit.entity.Player;
  */
 public class Equipped implements Component {
 
+  private UUID owner;
+
   public Equipped(Player owner) {
-    this.owner = owner;
+    this.owner = owner.getUniqueId();
   }
 
-  Player owner;
-
+  /**
+   * The player that has this entity equipped.
+   */
   public Player getOwner() {
-    return owner;
+    return Bukkit.getPlayer(owner);
   }
 }

@@ -1,12 +1,15 @@
 package com.mineinabyss.geary.core;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.mineinabyss.geary.ecs.EntityToUUIDMapper;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -14,47 +17,71 @@ import org.bukkit.plugin.Plugin;
 
 public class ItemUtil {
 
-  private final Plugin plugin;
-  private final NamespacedKey componentUUIDKey;
-  private final ItemToEntityMapper itemToEntityMapper;
+  private final NamespacedKey componentIdKey;
+  private final EntityToUUIDMapper entityToUUIDMapper;
+  private Engine engine;
 
-  public ItemUtil(Plugin plugin, ItemToEntityMapper itemToEntityMapper) {
-    this.plugin = plugin;
-
-    componentUUIDKey = new NamespacedKey(plugin, "uuid");
-    this.itemToEntityMapper = itemToEntityMapper;
+  public ItemUtil(Plugin plugin, EntityToUUIDMapper entityToUUIDMapper,
+      Engine engine) {
+    componentIdKey = new NamespacedKey(plugin, "uuid");
+    this.entityToUUIDMapper = entityToUUIDMapper;
+    this.engine = engine;
   }
 
-  public Optional<Entity> getEcsEntityFromItem(ItemStack itemStack) {
+  public Optional<Entity> getEcsEntityFromItem(ItemStack itemStack) throws ItemDegradedException {
     if (itemStack != null && itemStack.hasItemMeta()) {
       ItemMeta itemMeta = itemStack.getItemMeta();
 
-      if (itemMeta.getPersistentDataContainer().has(componentUUIDKey,
+      if (itemMeta.getPersistentDataContainer().has(componentIdKey,
           PersistentDataType.BYTE_ARRAY)) {
-        UUID uuid = getUUIDFromBytes(itemMeta.getPersistentDataContainer()
-            .get(componentUUIDKey, PersistentDataType.BYTE_ARRAY));
+        Optional<UUID> uuid = Optional.ofNullable(itemMeta.getPersistentDataContainer()
+            .get(componentIdKey, PersistentDataType.BYTE_ARRAY)).map(ItemUtil::getUUIDFromBytes);
 
-        return itemToEntityMapper.getEntityForUUID(uuid);
+        Optional<Entity> entity = uuid.map(entityToUUIDMapper::getEntity);
+
+        // If this has a UUID but no mapping, kill it.
+        if (!entity.isPresent()) {
+          throw new ItemDegradedException();
+        }
+
+        return entity;
       }
     }
     return Optional.empty();
   }
 
   public ItemStack createItemWithEcsEntity(EntityInitializer entityInitializer, Material material) {
-    Entity entity = entityInitializer.initializeEntity();
-
-    UUID uuid = UUID.randomUUID();
-    itemToEntityMapper.addEntityWithUUID(uuid, entity);
 
     ItemStack itemStack = new ItemStack(material);
     ItemMeta itemMeta = Bukkit.getItemFactory().getItemMeta(material);
 
-    itemMeta.getPersistentDataContainer()
-        .set(componentUUIDKey, PersistentDataType.BYTE_ARRAY, getBytesFromUUID(uuid));
-
     itemStack.setItemMeta(itemMeta);
 
+    attachToItemStack(entityInitializer, itemStack);
+
     return itemStack;
+  }
+
+  public void attachToItemStack(EntityInitializer entityInitializer, ItemStack itemStack) {
+    Entity entity = entityInitializer.initializeEntity();
+
+    engine.addEntity(entity);
+    UUID uuid = entityToUUIDMapper.getId(entity);
+
+    ItemMeta itemMeta = itemStack.getItemMeta();
+    itemMeta.getPersistentDataContainer()
+        .set(componentIdKey, PersistentDataType.BYTE_ARRAY, getBytesFromUUID(uuid));
+
+    itemStack.setItemMeta(itemMeta);
+  }
+
+  public Optional<Entity> removeOrGet(ItemStack itemStack, Inventory inventory) {
+    try {
+      return getEcsEntityFromItem(itemStack);
+    } catch (ItemDegradedException e) {
+      inventory.remove(itemStack);
+      return Optional.empty();
+    }
   }
 
   public static byte[] getBytesFromUUID(UUID uuid) {
@@ -77,5 +104,9 @@ public class ItemUtil {
   public interface EntityInitializer {
 
     Entity initializeEntity();
+  }
+
+  static class ItemDegradedException extends Exception {
+
   }
 }
